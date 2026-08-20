@@ -1,0 +1,79 @@
+const CACHE_NAME = 'math-game-v1';
+const OFFLINE_PAGE = './index.html';
+
+const ASSETS_TO_CACHE = [
+  './',
+  './index.html',
+  './manifest.json',
+  './games/index.html',
+  './games/21_th_toan_1_cong_tru_10/index.html',
+  './games/21_th_toan_1_cong_tru_10/game_01_Bat_dau.html'
+];
+
+// Install event - cache core assets
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    }).catch(() => console.log('Cache install failed'))
+  );
+  self.skipWaiting();
+});
+
+// Activate event - clean old caches
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key))
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// Fetch event - Stale-While-Revalidate strategy
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  
+  // Skip non-GET requests
+  if (request.method !== 'GET') return;
+  
+  // For HTML pages and critical assets, use network first then fallback to cache
+  if (request.url.includes('.html') || request.url.includes('manifest')) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          // Update cache in background
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseClone);
+          });
+          return networkResponse;
+        })
+        .catch(() => caches.match(request))
+    );
+  } else {
+    // For other assets, use stale-while-revalidate
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(request).then((cachedResponse) => {
+          const fetchPromise = fetch(request).then((networkResponse) => {
+            cache.put(request, networkResponse.clone());
+            return networkResponse;
+          }).catch(() => cachedResponse);
+          
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+  }
+});
+
+// Handle messages from clients
+self.addEventListener('message', (event) => {
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});

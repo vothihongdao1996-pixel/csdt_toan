@@ -1,0 +1,38 @@
+{
+  "name": "Toán 1: Phép Tính Cộng Trừ Trong Phạm Vi 10",
+  "short_name": "Toán Lớp 1",
+  "description": "Trò chơi giáo dục tương tác - Luyện tập phép tính và giải toán có lời văn",
+  "start_url": "./games/21_th_toan_1_cong_tru_10/game_01_Bat_dau.html",
+  "display": "standalone",
+  "background_color": "#F0F9FF",
+  "theme_color": "#0284C7",
+  "orientation": "portrait-primary",
+  "scope": ".",
+  "icons": [
+    {
+      "src": "./icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
