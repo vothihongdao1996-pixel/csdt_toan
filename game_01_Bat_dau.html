@@ -1092,15 +1092,30 @@ document.getElementById('adminModal').addEventListener('click', function(e) {
 window.addEventListener('DOMContentLoaded', init);
   // --- BẮT ĐẦU ĐOẠN MÃ GỬI ĐIỂM VỀ GOOGLE SHEETS ---
 function guiDiemVeGoogleSheet(tenHocSinh, diemSo, soCauDung, tongSoCau) {
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbw45OHWrSObffSGgSSlqjsOPUAxAM5UhPppToPLkAcndfPEVNFc3pylMGXiGj7IlCIl2g/exec';
+  try {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw45OHWrSObffSGgSSlqjsOPUAxAM5UhPppToPLkAcndfPEVNFc3pylMGXiGj7IlCIl2g/exec';
 
-  const payload = {
-    name: tenHocSinh || 'Học sinh',
-    score: diemSo || 0,
-    correct: soCauDung || 0,
-    total: tongSoCau || 7
-  };
+    const payload = {
+      name: (typeof tenHocSinh === 'string' && tenHocSinh.trim() !== '') ? tenHocSinh : 'Học sinh',
+      score: Number(diemSo) || 0,
+      correct: Number(soCauDung) || 0,
+      total: Number(tongSoCau) || 7
+    };
 
+    fetch(scriptURL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(() => console.log('✅ Đã lưu kết quả thành công vào Google Sheet!'))
+    .catch(err => console.error('❌ Lỗi gửi dữ liệu:', err));
+  } catch (e) {
+    console.warn('Bỏ qua lỗi để game tiếp tục chạy:', e);
+    }
+  }
   fetch(scriptURL, {
     method: 'POST',
     mode: 'no-cors',
