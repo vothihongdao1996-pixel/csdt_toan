@@ -54,11 +54,6 @@
     <div class="spinner"></div>
   </div>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(() => console.log('✅ SW registered'))
-        .catch(e => console.error('SW fail', e));
-    }
     setTimeout(() => {
       window.location.href = './games/21_th_toan_1_cong_tru_10/game_01_Bat_dau.html';
     }, 1500);
